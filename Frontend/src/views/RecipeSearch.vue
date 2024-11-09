@@ -45,7 +45,7 @@
               <strong>{{ recipe.title }}</strong>
             </h4>
             <p>Calories: {{ Math.round(recipe.calories) }}</p>
-            <p>Cooking Time: {{ Math.round(recipe.calories) }}</p>
+            <p>Cooking Time: {{ Math.round(recipe.totalTime) }}</p>
             <p>Source: {{ recipe.source }}</p>
             <a :href="recipe.url" target="_blank">View Recipe</a>
           </div>
@@ -165,39 +165,39 @@ export default {
     },
 
     async searchRecipes() {
-  this.isEDAMAM = true
-  this.isLoading = true
-  try {
-    // Start with base query parameter
-    const params = new URLSearchParams({
-      query: this.searchQuery
-    })
-
-    // Add filters if checkbox is checked
-    if (this.applyHealthFilters) {
-      // Add allergies as health parameters
-      if (this.allergies.length > 0) {
-        this.allergies.forEach((allergy) => {
-          params.append('health', allergy.toLowerCase())
+      this.isEDAMAM = true
+      this.isLoading = true
+      try {
+        // Start with base query parameter
+        const params = new URLSearchParams({
+          query: this.searchQuery
         })
-      }
 
-      // Add dietary restrictions as diet parameters
-      if (this.dietaryRestrictions.length > 0) {
-        this.dietaryRestrictions.forEach((diet) => {
-          params.append('diet', diet.toLowerCase())
-        })
-      }
-    }
+        // Add filters if checkbox is checked
+        if (this.applyHealthFilters) {
+          // Add allergies as health parameters
+          if (this.allergies.length > 0) {
+            this.allergies.forEach((allergy) => {
+              params.append('health', allergy.toLowerCase())
+            })
+          }
 
-    const response = await axios.get(`http://157.245.198.241:5000/api/search-recipes?${params.toString()}`)
-    this.searchResults = response.data
-  } catch (error) {
-    console.error('Error searching recipes:', error)
-  } finally {
-    this.isLoading = false
-  }
-},
+          // Add dietary restrictions as diet parameters
+          if (this.dietaryRestrictions.length > 0) {
+            this.dietaryRestrictions.forEach((diet) => {
+              params.append('diet', diet.toLowerCase())
+            })
+          }
+        }
+
+        const response = await axios.get(`http://157.245.198.241:5000/api/search-recipes?${params.toString()}`)
+        this.searchResults = response.data
+      } catch (error) {
+        console.error('Error searching recipes:', error)
+      } finally {
+        this.isLoading = false
+      }
+    },
     async makeRequest(url, method, body = null) {
       const headers = {
         'Content-Type': 'application/json',

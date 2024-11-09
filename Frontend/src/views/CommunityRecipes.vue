@@ -195,75 +195,75 @@ export default {
   },
   computed: {
     filteredRecipes() {
-  let result = [...this.recipes]
+      let result = [...this.recipes]
 
-  // Apply search filter if there's a search query
-  if (this.searchQuery) {
-    const searchTerms = this.searchQuery
-      .toLowerCase()
-      .split(',')
-      .map((term) => term.trim())
-      .filter((term) => term.length > 0)
+      // Apply search filter if there's a search query
+      if (this.searchQuery) {
+        const searchTerms = this.searchQuery
+          .toLowerCase()
+          .split(',')
+          .map((term) => term.trim())
+          .filter((term) => term.length > 0)
 
-    result = result.filter((recipe) => {
-      // Add null checks for recipe properties
-      const recipeName = recipe.RecipeName ? recipe.RecipeName.toLowerCase() : ''
-      const ingredients = recipe.IngredientList ? recipe.IngredientList.toLowerCase() : ''
+        result = result.filter((recipe) => {
+          // Add null checks for recipe properties
+          const recipeName = recipe.RecipeName ? recipe.RecipeName.toLowerCase() : ''
+          const ingredients = recipe.IngredientList ? recipe.IngredientList.toLowerCase() : ''
 
-      // Check if ALL search terms are present in either recipe name or ingredients
-      return searchTerms.every(
-        (term) => recipeName.includes(term) || ingredients.includes(term)
-      )
-    })
-  }
+          // Check if ALL search terms are present in either recipe name or ingredients
+          return searchTerms.every(
+            (term) => recipeName.includes(term) || ingredients.includes(term)
+          )
+        })
+      }
 
-  // Apply rating filter
-  if (this.ratingFilter !== '0') {
-    if (this.ratingFilter === 'no') {
-      // Filter for recipes with no ratings (RatingCount === 0 or AverageRating === 0)
-      result = result.filter((recipe) => !recipe.RatingCount || !recipe.AverageRating)
-    } else {
-      const minRating = Number(this.ratingFilter)
-      result = result.filter((recipe) => {
-        if (!recipe.AverageRating) return false
-        if (this.ratingFilter === '5') {
-          // For 5 stars, we want ratings that round to 5.0
-          return recipe.AverageRating >= 4.5
+      // Apply rating filter
+      if (this.ratingFilter !== '0') {
+        if (this.ratingFilter === 'no') {
+          // Filter for recipes with no ratings (RatingCount === 0 or AverageRating === 0)
+          result = result.filter((recipe) => !recipe.RatingCount || !recipe.AverageRating)
         } else {
-          // For other ratings, we want greater than or equal to
-          return recipe.AverageRating >= minRating
+          const minRating = Number(this.ratingFilter)
+          result = result.filter((recipe) => {
+            if (!recipe.AverageRating) return false
+            if (this.ratingFilter === '5') {
+              // For 5 stars, we want ratings that round to 5.0
+              return recipe.AverageRating >= 4.5
+            } else {
+              // For other ratings, we want greater than or equal to
+              return recipe.AverageRating >= minRating
+            }
+          })
         }
-      })
-    }
-  }
+      }
 
-  // Apply sorting based on radio button selection
-  if (this.sortDirection === 'highest') {
-    result.sort((a, b) => {
-      // Handle cases where AverageRating might be undefined
-      const aRating = a.AverageRating || 0
-      const bRating = b.AverageRating || 0
-      // Sort by average rating (descending)
-      const ratingDiff = bRating - aRating
-      if (ratingDiff !== 0) return ratingDiff
-      // If ratings are equal, sort by number of ratings (descending)
-      return (b.RatingCount || 0) - (a.RatingCount || 0)
-    })
-  } else if (this.sortDirection === 'lowest') {
-    result.sort((a, b) => {
-      // Handle cases where AverageRating might be undefined
-      const aRating = a.AverageRating || 0
-      const bRating = b.AverageRating || 0
-      // Sort by average rating (ascending)
-      const ratingDiff = aRating - bRating
-      if (ratingDiff !== 0) return ratingDiff
-      // If ratings are equal, sort by number of ratings (ascending)
-      return (a.RatingCount || 0) - (b.RatingCount || 0)
-    })
-  }
+      // Apply sorting based on radio button selection
+      if (this.sortDirection === 'highest') {
+        result.sort((a, b) => {
+          // Handle cases where AverageRating might be undefined
+          const aRating = a.AverageRating || 0
+          const bRating = b.AverageRating || 0
+          // Sort by average rating (descending)
+          const ratingDiff = bRating - aRating
+          if (ratingDiff !== 0) return ratingDiff
+          // If ratings are equal, sort by number of ratings (descending)
+          return (b.RatingCount || 0) - (a.RatingCount || 0)
+        })
+      } else if (this.sortDirection === 'lowest') {
+        result.sort((a, b) => {
+          // Handle cases where AverageRating might be undefined
+          const aRating = a.AverageRating || 0
+          const bRating = b.AverageRating || 0
+          // Sort by average rating (ascending)
+          const ratingDiff = aRating - bRating
+          if (ratingDiff !== 0) return ratingDiff
+          // If ratings are equal, sort by number of ratings (ascending)
+          return (a.RatingCount || 0) - (b.RatingCount || 0)
+        })
+      }
 
-  return result
-},
+      return result
+    },
     isRecipeFavourite() {
       return (recipeId) => this.favourites.some((fav) => fav.id === recipeId)
     }
@@ -278,12 +278,12 @@ export default {
     async fetchRecipes() {
       this.loading = true
       try {
-        const response = await axios.get('/api/all-personal-recipes')
+        const response = await axios.get('http://157.245.198.241:5000/api/all-personal-recipes')
         this.recipes = response.data
 
         // Fetch reviews for each recipe
         for (let recipe of this.recipes) {
-          const reviewsResponse = await axios.get(`/api/recipe-reviews/${recipe.UserMadeRecipeID}`)
+          const reviewsResponse = await axios.get(`http://157.245.198.241:5000/api/recipe-reviews/${recipe.UserMadeRecipeID}`)
           recipe.reviews = reviewsResponse.data
         }
       } catch (error) {
@@ -306,7 +306,7 @@ export default {
 
       try {
         await axios.post(
-          '/api/rate-recipe',
+          'http://157.245.198.241:5000/api/rate-recipe',
           {
             userMadeRecipeId: recipeId,
             rating: Number(this.newReview.rating),
@@ -407,7 +407,7 @@ h1 {
   color: #5d4037;
 }
 
-/* Previous styles remain unchanged */
+
 .community-recipes {
   padding: 20px;
   max-width: 1200px;
