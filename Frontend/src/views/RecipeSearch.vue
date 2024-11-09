@@ -262,12 +262,11 @@ export default {
       }
     },
     async addToFavourites(recipeId) {
-      const recipeId = this.isEDAMAM ? recipe.id : recipe.UserMadeRecipeID
-  console.log('Adding to favorites:', {
-    recipe,
-    isEDAMAM: this.isEDAMAM,
-    recipeId
-  });
+      console.log('Adding to favorites:', {
+        recipe,
+        isEDAMAM: this.isEDAMAM,
+        recipeId
+      });
       await this.makeRequest('/favourites', 'POST', {
         recipeId: recipeId,
         isEdamamRecipe: this.isEDAMAM
