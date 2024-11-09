@@ -38,14 +38,14 @@
             src="../assets/favourite_unchecked.png"
             alt="fav-icon"
             class="fav-icon"
-            @click="addToFavourites(recipe.id)"
+            @click="addToFavourites(recipe)"
           />
           <div class="recipe-info">
             <h4>
               <strong>{{ recipe.title }}</strong>
             </h4>
             <p>Calories: {{ Math.round(recipe.calories) }}</p>
-            <p>Cooking Time: {{ Math.round(recipe.calories) }}</p>
+            <p>Cooking Time: {{ Math.round(recipe.totalTime) }}</p>
             <p>Source: {{ recipe.source }}</p>
             <a :href="recipe.url" target="_blank">View Recipe</a>
           </div>
@@ -66,7 +66,7 @@
             src="../assets/favourite_unchecked.png"
             alt="fav-icon"
             class="fav-icon"
-            @click="addToFavourites(recipe.UserMadeRecipeID)"
+            @click="addToFavourites(recipe)"
           />
           <div class="recipe-info">
             <h4>
@@ -192,7 +192,7 @@ export default {
 
         const response = await axios.get(`http://157.245.198.241:5000/api/search-recipes?${params.toString()}`)
         this.searchResults = response.data
-        console.log('Search results:', this.searchResults) // Added log
+        console.log('Search results:', this.searchResults)
       } catch (error) {
         console.error('Error searching recipes:', error)
       } finally {
@@ -218,7 +218,7 @@ export default {
       this.isEDAMAM = false
       try {
         const result = await this.makeRequest('/all-personal-recipes', 'GET')
-        console.log('User recipes:', result) // Added log
+        console.log('User recipes:', result)
         this.searchResults = result
       } catch (error) {
         console.error('Error fetching items:', error)
@@ -228,21 +228,21 @@ export default {
       this.favourites = []
       try {
         const result = await this.makeRequest('/favourites', 'GET')
-        console.log('Raw favorites from API:', result) // Added log
+        console.log('Raw favorites from API:', result)
         for (const fav of result) {
           if (fav.isEdamamRecipe == 0) {
             const recipeDetails = await this.displayUserRecipe(fav.RecipeID)
-            console.log('User recipe details:', recipeDetails) // Added log
+            console.log('User recipe details:', recipeDetails)
             this.favourites.push({
               id: recipeDetails[0].UserMadeRecipeID,
               recipe_name: recipeDetails[0].RecipeName
             })
           } else {
             try {
-              const response = await axios.get(`/api/recipe/${fav.RecipeID}`, {
+              const response = await axios.get(`http://157.245.198.241:5000/api/recipe/${fav.RecipeID}`, {
                 params: { isEdamamRecipe: true }
               })
-              console.log('EDAMAM recipe response:', response.data) // Added log
+              console.log('EDAMAM recipe response:', response.data)
               this.favourites.push({
                 id: response.data.id,
                 recipe_name: response.data.title
@@ -255,7 +255,7 @@ export default {
       } catch (error) {
         console.error('Error fetching favourites:', error)
       }
-      console.log('Final favourites array:', this.favourites) // Added log
+      console.log('Final favourites array:', this.favourites)
     },
     async displayUserRecipe(recipeId) {
       try {
@@ -265,29 +265,35 @@ export default {
         console.error('Error fetching recipe:', error)
       }
     },
-    async addToFavourites(recipeId) {
-      console.log('Adding to favorites. RecipeId:', recipeId) // Added log
-      console.log('Is EDAMAM recipe:', this.isEDAMAM) // Added log
+    async addToFavourites(recipe) {
+      console.log('Adding to favorites. Recipe:', recipe)
+      console.log('Is EDAMAM recipe:', this.isEDAMAM)
 
+      const recipeId = this.isEDAMAM ? recipe.id : recipe.UserMadeRecipeID
+      
       await this.makeRequest('/favourites', 'POST', {
         recipeId: recipeId,
         isEdamamRecipe: this.isEDAMAM
       })
 
-      const recipeToAdd = this.isEDAMAM
-        ? this.searchResults.find((recipe) => recipe.id === recipeId)
-        : this.searchResults.find((recipe) => recipe.UserMadeRecipeID === recipeId)
-
-      console.log('Recipe to add:', recipeToAdd) // Added log
-
-      if (recipeToAdd) {
-        const favoriteEntry = {
-          id: recipeToAdd.id || recipeToAdd.UserMadeRecipeID,
-          recipe_name: recipeToAdd.title || recipeToAdd.RecipeName
-        }
-        console.log('Adding to favorites array:', favoriteEntry) // Added log
-        this.favourites.push(favoriteEntry)
+      if (this.isEDAMAM) {
+        this.favourites.push({
+          id: recipe.id,
+          recipe_name: recipe.title,
+          source: recipe.source,
+          calories: recipe.calories,
+          cooking_time: recipe.totalTime,
+          url: recipe.url,
+          isEdamamRecipe: 1
+        })
+      } else {
+        this.favourites.push({
+          id: recipe.UserMadeRecipeID,
+          recipe_name: recipe.RecipeName,
+          isEdamamRecipe: 0
+        })
       }
+      console.log('Updated favorites array:', this.favourites)
     },
     async removeFromFavourites(recipeId) {
       await this.makeRequest(`/favourites/${recipeId}`, 'DELETE')

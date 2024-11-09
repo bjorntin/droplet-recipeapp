@@ -95,15 +95,15 @@ export default {
       this.favourites = []
       try {
         const result = await this.makeRequest('/favourites', 'GET')
-        console.log('Raw favorites from API:', result) // Added log
+        console.log('Raw favorites from API:', result)
 
         // Map each favorite to a promise to process recipes concurrently
         const favouritePromises = result.map(async (fav) => {
-          console.log('Processing favorite:', fav) // Added log
+          console.log('Processing favorite:', fav)
           
           if (fav.isEdamamRecipe == 0) {
             const recipeDetails = await this.displayUserRecipe(fav.RecipeID)
-            console.log('User recipe details:', recipeDetails) // Added log
+            console.log('User recipe details:', recipeDetails)
             return {
               isEdamamRecipe: 0,
               id: recipeDetails[0].UserMadeRecipeID,
@@ -116,10 +116,11 @@ export default {
             }
           } else {
             try {
-              const response = await axios.get(`/api/recipe/${fav.RecipeID}`, {
+              // Changed to use full URL like in RecipeSearch.vue
+              const response = await axios.get(`http://157.245.198.241:5000/api/recipe/${fav.RecipeID}`, {
                 params: { isEdamamRecipe: true }
               })
-              console.log('EDAMAM recipe response:', response.data) // Added log
+              console.log('EDAMAM recipe response:', response.data)
               
               const edamamRecipe = {
                 isEdamamRecipe: 1,
@@ -130,22 +131,22 @@ export default {
                 cooking_time: response.data.totalTime,
                 url: response.data.url
               }
-              console.log('Formatted EDAMAM recipe:', edamamRecipe) // Added log
+              console.log('Formatted EDAMAM recipe:', edamamRecipe)
               return edamamRecipe
             } catch (error) {
               console.error('Error fetching EDAMAM recipe:', error)
-              console.log('Failed recipe ID:', fav.RecipeID) // Added log
+              console.log('Failed recipe ID:', fav.RecipeID)
             }
           }
         })
 
         // Wait for all recipes to be fetched before updating the favourites array
         const processedFavorites = await Promise.all(favouritePromises)
-        console.log('Processed favorites before filtering:', processedFavorites) // Added log
+        console.log('Processed favorites before filtering:', processedFavorites)
         
         // Filter out any undefined entries (from failed requests)
         this.favourites = processedFavorites.filter(Boolean)
-        console.log('Final favorites array:', this.favourites) // Added log
+        console.log('Final favorites array:', this.favourites)
       } catch (error) {
         console.error('Error fetching favourites:', error)
       }
@@ -159,10 +160,10 @@ export default {
       }
     },
     async removeFromFavourites(recipeId) {
-      console.log('Removing recipe with ID:', recipeId) // Added log
+      console.log('Removing recipe with ID:', recipeId)
       // Remove the recipe from the `favourites` array directly in the UI
       this.favourites = this.favourites.filter((recipe) => recipe.id !== recipeId)
-      console.log('Updated favorites after removal:', this.favourites) // Added log
+      console.log('Updated favorites after removal:', this.favourites)
 
       // Send the delete request to the API
       await this.makeRequest(`/favourites/${recipeId}`, 'DELETE')
