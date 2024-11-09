@@ -165,39 +165,40 @@ export default {
     },
 
     async searchRecipes() {
-  this.isEDAMAM = true
-  this.isLoading = true
-  try {
-    // Start with base query parameter
-    const params = new URLSearchParams({
-      query: this.searchQuery
-    })
-
-    // Add filters if checkbox is checked
-    if (this.applyHealthFilters) {
-      // Add allergies as health parameters
-      if (this.allergies.length > 0) {
-        this.allergies.forEach((allergy) => {
-          params.append('health', allergy.toLowerCase())
+      this.isEDAMAM = true
+      this.isLoading = true
+      try {
+        // Start with base query parameter
+        const params = new URLSearchParams({
+          query: this.searchQuery
         })
-      }
 
-      // Add dietary restrictions as diet parameters
-      if (this.dietaryRestrictions.length > 0) {
-        this.dietaryRestrictions.forEach((diet) => {
-          params.append('diet', diet.toLowerCase())
-        })
-      }
-    }
+        // Add filters if checkbox is checked
+        if (this.applyHealthFilters) {
+          // Add allergies as health parameters
+          if (this.allergies.length > 0) {
+            this.allergies.forEach((allergy) => {
+              params.append('health', allergy.toLowerCase())
+            })
+          }
 
-    const response = await axios.get(`http://157.245.198.241:5000/api/search-recipes?${params.toString()}`)
-    this.searchResults = response.data
-  } catch (error) {
-    console.error('Error searching recipes:', error)
-  } finally {
-    this.isLoading = false
-  }
-},
+          // Add dietary restrictions as diet parameters
+          if (this.dietaryRestrictions.length > 0) {
+            this.dietaryRestrictions.forEach((diet) => {
+              params.append('diet', diet.toLowerCase())
+            })
+          }
+        }
+
+        const response = await axios.get(`http://157.245.198.241:5000/api/search-recipes?${params.toString()}`)
+        this.searchResults = response.data
+        console.log('Search results:', this.searchResults) // Added log
+      } catch (error) {
+        console.error('Error searching recipes:', error)
+      } finally {
+        this.isLoading = false
+      }
+    },
     async makeRequest(url, method, body = null) {
       const headers = {
         'Content-Type': 'application/json',
@@ -217,7 +218,7 @@ export default {
       this.isEDAMAM = false
       try {
         const result = await this.makeRequest('/all-personal-recipes', 'GET')
-        console.log(result)
+        console.log('User recipes:', result) // Added log
         this.searchResults = result
       } catch (error) {
         console.error('Error fetching items:', error)
@@ -227,9 +228,11 @@ export default {
       this.favourites = []
       try {
         const result = await this.makeRequest('/favourites', 'GET')
+        console.log('Raw favorites from API:', result) // Added log
         for (const fav of result) {
           if (fav.isEdamamRecipe == 0) {
             const recipeDetails = await this.displayUserRecipe(fav.RecipeID)
+            console.log('User recipe details:', recipeDetails) // Added log
             this.favourites.push({
               id: recipeDetails[0].UserMadeRecipeID,
               recipe_name: recipeDetails[0].RecipeName
@@ -239,6 +242,7 @@ export default {
               const response = await axios.get(`/api/recipe/${fav.RecipeID}`, {
                 params: { isEdamamRecipe: true }
               })
+              console.log('EDAMAM recipe response:', response.data) // Added log
               this.favourites.push({
                 id: response.data.id,
                 recipe_name: response.data.title
@@ -251,7 +255,7 @@ export default {
       } catch (error) {
         console.error('Error fetching favourites:', error)
       }
-      console.log(this.favourites)
+      console.log('Final favourites array:', this.favourites) // Added log
     },
     async displayUserRecipe(recipeId) {
       try {
@@ -262,7 +266,9 @@ export default {
       }
     },
     async addToFavourites(recipeId) {
-      
+      console.log('Adding to favorites. RecipeId:', recipeId) // Added log
+      console.log('Is EDAMAM recipe:', this.isEDAMAM) // Added log
+
       await this.makeRequest('/favourites', 'POST', {
         recipeId: recipeId,
         isEdamamRecipe: this.isEDAMAM
@@ -272,11 +278,15 @@ export default {
         ? this.searchResults.find((recipe) => recipe.id === recipeId)
         : this.searchResults.find((recipe) => recipe.UserMadeRecipeID === recipeId)
 
+      console.log('Recipe to add:', recipeToAdd) // Added log
+
       if (recipeToAdd) {
-        this.favourites.push({
+        const favoriteEntry = {
           id: recipeToAdd.id || recipeToAdd.UserMadeRecipeID,
           recipe_name: recipeToAdd.title || recipeToAdd.RecipeName
-        })
+        }
+        console.log('Adding to favorites array:', favoriteEntry) // Added log
+        this.favourites.push(favoriteEntry)
       }
     },
     async removeFromFavourites(recipeId) {
