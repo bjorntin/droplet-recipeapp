@@ -25,7 +25,7 @@ export default defineConfig({
     host: '0.0.0.0',
     port: 5173
   },
-  base: 'http://157.245.198.241:5173/',
+  base: '/',
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
