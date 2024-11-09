@@ -262,25 +262,11 @@ export default {
       }
     },
     async addToFavourites(recipeId) {
-      console.log('Adding to favorites:', {
-        recipe,
-        isEDAMAM: this.isEDAMAM,
-        recipeId
-      });
+      
       await this.makeRequest('/favourites', 'POST', {
         recipeId: recipeId,
         isEdamamRecipe: this.isEDAMAM
       })
-      if (this.isEDAMAM) {
-    console.log('EDAMAM recipe being added to favorites array:', {
-      id: recipe.id,
-      source: recipe.source,
-      recipe_name: recipe.title,
-      calories: recipe.calories,
-      cooking_time: recipe.totalTime,
-      url: recipe.url
-    });
-  }
 
       const recipeToAdd = this.isEDAMAM
         ? this.searchResults.find((recipe) => recipe.id === recipeId)
