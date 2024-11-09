@@ -262,31 +262,31 @@ export default {
       }
     },
     async addToFavourites(recipe) {
-      const recipeId = this.isEDAMAM ? recipe.id : recipe.UserMadeRecipeID
-      
-      await this.makeRequest('/favourites', 'POST', {
-        recipeId: recipeId,
-        isEdamamRecipe: this.isEDAMAM
-      })
+  const recipeId = this.isEDAMAM ? recipe.id : recipe.UserMadeRecipeID
+  
+  await this.makeRequest('/favourites', 'POST', {
+    recipeId: recipeId,
+    isEdamamRecipe: this.isEDAMAM
+  })
 
-      if (this.isEDAMAM) {
-        this.favourites.push({
-          isEdamamRecipe: 1,
-          id: recipe.id,
-          source: recipe.source,
-          recipe_name: recipe.title,
-          calories: recipe.calories,
-          cooking_time: recipe.totalTime,
-          url: recipe.url
-        })
-      } else {
-        this.favourites.push({
-          isEdamamRecipe: 0,
-          id: recipe.UserMadeRecipeID,
-          recipe_name: recipe.RecipeName
-        })
-      }
-    },
+  if (this.isEDAMAM) {
+    this.favourites.push({
+      id: recipe.id,
+      title: recipe.title,  // Changed from recipe_name to match backend
+      source: recipe.source,
+      calories: recipe.calories,
+      totalTime: recipe.totalTime,  // Changed from cooking_time to match backend
+      url: recipe.url,
+      isEdamamRecipe: 1
+    })
+  } else {
+    this.favourites.push({
+      id: recipe.UserMadeRecipeID,
+      recipe_name: recipe.RecipeName,
+      isEdamamRecipe: 0
+    })
+  }
+},
     async removeFromFavourites(recipeId) {
       await this.makeRequest(`/favourites/${recipeId}`, 'DELETE')
       this.favourites = this.favourites.filter((fav) => fav.id !== recipeId)

@@ -18,14 +18,14 @@
           </div>
         </div>
         <div v-else>
-          <h4>
-            <strong>{{ recipe.recipe_name }}</strong>
-          </h4>
-          <p>Calories: {{ Math.round(recipe.calories) }}</p>
-          <p>Cooking Time: {{ Math.round(recipe.cooking_time) }}</p>
-          <p>Source: {{ recipe.source }}</p>
-          <a :href="recipe.url" target="_blank">View Recipe</a>
-        </div>
+  <h4>
+    <strong>{{ recipe.title }}</strong>  <!-- Changed from recipe_name to title -->
+  </h4>
+  <p>Calories: {{ Math.round(recipe.calories) }}</p>
+  <p>Cooking Time: {{ Math.round(recipe.totalTime) }}</p>  <!-- Changed from cooking_time to totalTime -->
+  <p>Source: {{ recipe.source }}</p>
+  <a :href="recipe.url" target="_blank">View Recipe</a>
+</div>
         <div class="recipe-actions">
           <button @click="removeFromFavourites(recipe.id)">Remove from Favourites</button>
           <!-- <button @click="editRecipe(recipe)">Edit</button>
