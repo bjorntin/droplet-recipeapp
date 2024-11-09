@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RecipeApp Backend Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h2 {
+            margin-top: 20px;
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        input,
+        button {
+            margin: 5px 0;
+        }
+
+        #results {
+            white-space: pre-wrap;
+            background-color: #f0f0f0;
+            padding: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>RecipeApp Backend Test</h1>
+
+    <h2>User Operations</h2>
+    <form id="signupForm">
+        <h3>Signup</h3>
+        <input type="text" id="signupUsername" placeholder="Username" required>
+        <input type="password" id="signupPassword" placeholder="Password" required>
+        <input type="text" id="dietaryRestrictions" placeholder="Dietary Restrictions">
+        <button type="submit">Signup</button>
+    </form>
+
+    <form id="loginForm">
+        <h3>Login</h3>
+        <input type="text" id="loginUsername" placeholder="Username" required>
+        <input type="password" id="loginPassword" placeholder="Password" required>
+        <button type="submit">Login</button>
+    </form>
+
+    <h2>Recipe Operations</h2>
+    <form id="searchRecipesForm">
+        <h3>Search Recipes</h3>
+        <input type="text" id="searchQuery" placeholder="Search Query" required>
+        <input type="text" id="healthLabels" placeholder="Health Labels (comma-separated)">
+        <button type="submit">Search Recipes</button>
+    </form>
+
+    <form id="getRecipesByIngredientsForm">
+        <h3>Get Recipes by Ingredients</h3>
+        <input type="text" id="ingredients" placeholder="Ingredients (comma-separated)" required>
+        <button type="submit">Get Recipes</button>
+    </form>
+
+    <form id="createPersonalRecipeForm">
+        <h3>Create Personal Recipe</h3>
+        <input type="text" id="recipeName" placeholder="Recipe Name" required>
+        <input type="text" id="prepTime" placeholder="Prep Time (HH:MM:SS)">
+        <input type="number" id="servingSize" placeholder="Serving Size">
+        <textarea id="prepSteps" placeholder="Preparation Steps"></textarea>
+        <textarea id="ingredientList" placeholder="Ingredient List"></textarea>
+        <button type="submit">Create Recipe</button>
+    </form>
+
+    <form id="getPersonalRecipesForm">
+        <h3>Get Personal Recipes</h3>
+        <button type="submit">Get Personal Recipes</button>
+    </form>
+
+    <form id="getAllPersonalRecipesForm">
+        <h3>Get All Personal Recipes</h3>
+        <button type="submit">Get All Personal Recipes</button>
+    </form>
+
+    <h2>Shopping List</h2>
+    <form id="addToShoppingListForm">
+        <h3>Add to Shopping List</h3>
+        <input type="text" id="itemName" placeholder="Item Name" required>
+        <input type="number" id="itemQuantity" placeholder="Quantity" required>
+        <button type="submit">Add to Shopping List</button>
+    </form>
+
+    <form id="getShoppingListForm">
+        <h3>Get Shopping List</h3>
+        <button type="submit">Get Shopping List</button>
+    </form>
+
+    <form id="deleteFromShoppingListForm">
+        <h3>Delete from Shopping List</h3>
+        <input type="number" id="shoppingListID" placeholder="ID" required>
+        <button type="submit">Delete from Shopping List</button>
+    </form>
+
+    <h2>Points System</h2>
+    <form id="getUserPointsForm">
+        <h3>Get User Points</h3>
+        <button type="submit">Get Points</button>
+    </form>
+
+    <form id="redeemPointsForm">
+        <h3>Redeem Points</h3>
+        <input type="number" id="pointsToRedeem" placeholder="Points to Redeem" required>
+        <button type="submit">Redeem Points</button>
+    </form>
+
+    <h2>Dietary Info</h2>
+    <form id="getDietaryInfoForm">
+        <h3>Get Dietary Info</h3>
+        <button type="submit">Get Dietary Info</button>
+    </form>
+
+    <form id="updateDietaryInfoForm">
+        <h3>Update Dietary Info</h3>
+        Dietary Restrictions:<br />
+        <input name="dietaryInfo[]" type="checkbox" value="vegetarian" />Vegetarian
+        <input name="dietaryInfo[]" type="checkbox" value="vegan" />Vegan
+        <input name="dietaryInfo[]" type="checkbox" value="gluten-free" />Gluten-Free
+        <button type="submit">Update Dietary Info</button>
+    </form>
+
+    <h2>Results</h2>
+    <pre id="results"></pre>
+
+    <script>
+        const API_URL = 'http://localhost:5000/api';
+        let currentUsername = '';
+
+        async function makeRequest(url, method, body = null) {
+            const headers = {
+                'Content-Type': 'application/json',
+                'X-Username': currentUsername
+            };
+            const options = { method, headers };
+            if (body) options.body = JSON.stringify(body);
+            const response = await fetch(API_URL + url, options);
+            return await response.json();
+        }
+
+        function displayResults(result) {
+            document.getElementById('results').textContent = JSON.stringify(result, null, 2);
+        }
+
+        document.getElementById('signupForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const result = await makeRequest('/signup', 'POST', {
+                username: document.getElementById('signupUsername').value,
+                password: document.getElementById('signupPassword').value,
+                dietaryRestrictions: document.getElementById('dietaryRestrictions').value
+            });
+            displayResults(result);
+        });
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const result = await makeRequest('/login', 'POST', {
+                username: document.getElementById('loginUsername').value,
+                password: document.getElementById('loginPassword').value
+            });
+            if (result.username) {
+                currentUsername = result.username;
+                alert(`Logged in as ${currentUsername}`);
+            }
+            displayResults(result);
+        });
+
+        document.getElementById('searchRecipesForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const query = document.getElementById('searchQuery').value;
+            const healthLabels = document.getElementById('healthLabels').value;
+            const result = await makeRequest(`/search-recipes?query=${query}&healthLabels=${healthLabels}`, 'GET');
+            displayResults(result);
+        });
+
+        document.getElementById('getRecipesByIngredientsForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const ingredients = document.getElementById('ingredients').value;
+            const result = await makeRequest(`/recipes-by-ingredients?ingredients=${ingredients}`, 'GET');
+            displayResults(result);
+        });
+
+        document.getElementById('createPersonalRecipeForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const result = await makeRequest('/personal-recipes', 'POST', {
+                recipeName: document.getElementById('recipeName').value,
+                prepTime: document.getElementById('prepTime').value,
+                servingSize: document.getElementById('servingSize').value,
+                prepSteps: document.getElementById('prepSteps').value,
+                ingredientList: document.getElementById('ingredientList').value
+            });
+            displayResults(result);
+        });
+
+        document.getElementById('getPersonalRecipesForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const result = await makeRequest('/personal-recipes', 'GET');
+            displayResults(result);
+        });
+
+        document.getElementById('getAllPersonalRecipesForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const result = await makeRequest('/all-personal-recipes', 'GET');
+            displayResults(result);
+        });
+
+        document.getElementById('addToShoppingListForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const result = await makeRequest('/shopping-list', 'POST', {
+                itemName: document.getElementById('itemName').value,
+                itemQuantity: document.getElementById('itemQuantity').value
+            });
+            displayResults(result);
+        });
+
+        document.getElementById('getShoppingListForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const result = await makeRequest('/shopping-list', 'GET');
+            displayResults(result);
+        });
+
+        document.getElementById('deleteFromShoppingListForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const shoppingListID = document.getElementById('shoppingListID').value;
+            console.log(shoppingListID);
+            const result = await makeRequest(`/shopping-list/${shoppingListID}`, 'DELETE');
+            displayResults(result);
+        });
+
+
+        document.getElementById('getUserPointsForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const result = await makeRequest('/user-points', 'GET');
+            displayResults(result);
+        });
+
+        document.getElementById('redeemPointsForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const result = await makeRequest('/redeem-points', 'POST', {
+                pointsToRedeem: document.getElementById('pointsToRedeem').value
+            });
+            displayResults(result);
+        });
+
+        document.getElementById('getDietaryInfoForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const result = await makeRequest('/dietary-info', 'GET');
+            displayResults(result);
+        });
+
+        document.getElementById('updateDietaryInfoForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const newDietaryInfo = [];
+            const info = document.querySelectorAll('input[name="dietaryInfo[]"]:checked');
+
+            info.forEach((item) => {
+                newDietaryInfo.push(item.value);
+            });
+
+            const result = await makeRequest('/dietary-info', 'POST', {
+                DietaryInfo: newDietaryInfo
+            });
+
+            displayResults(result);
+        });
+    </script>
+
+
+</body>
+
+</html>
