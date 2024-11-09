@@ -38,14 +38,14 @@
             src="../assets/favourite_unchecked.png"
             alt="fav-icon"
             class="fav-icon"
-            @click="addToFavourites(recipe)"
+            @click="addToFavourites(recipe.id)"
           />
           <div class="recipe-info">
             <h4>
               <strong>{{ recipe.title }}</strong>
             </h4>
             <p>Calories: {{ Math.round(recipe.calories) }}</p>
-            <p>Cooking Time: {{ Math.round(recipe.totalTime) }}</p>
+            <p>Cooking Time: {{ Math.round(recipe.calories) }}</p>
             <p>Source: {{ recipe.source }}</p>
             <a :href="recipe.url" target="_blank">View Recipe</a>
           </div>
@@ -66,7 +66,7 @@
             src="../assets/favourite_unchecked.png"
             alt="fav-icon"
             class="fav-icon"
-            @click="addToFavourites(recipe)"
+            @click="addToFavourites(recipe.UserMadeRecipeID)"
           />
           <div class="recipe-info">
             <h4>
@@ -165,39 +165,39 @@ export default {
     },
 
     async searchRecipes() {
-      this.isEDAMAM = true
-      this.isLoading = true
-      try {
-        // Start with base query parameter
-        const params = new URLSearchParams({
-          query: this.searchQuery
+  this.isEDAMAM = true
+  this.isLoading = true
+  try {
+    // Start with base query parameter
+    const params = new URLSearchParams({
+      query: this.searchQuery
+    })
+
+    // Add filters if checkbox is checked
+    if (this.applyHealthFilters) {
+      // Add allergies as health parameters
+      if (this.allergies.length > 0) {
+        this.allergies.forEach((allergy) => {
+          params.append('health', allergy.toLowerCase())
         })
-
-        // Add filters if checkbox is checked
-        if (this.applyHealthFilters) {
-          // Add allergies as health parameters
-          if (this.allergies.length > 0) {
-            this.allergies.forEach((allergy) => {
-              params.append('health', allergy.toLowerCase())
-            })
-          }
-
-          // Add dietary restrictions as diet parameters
-          if (this.dietaryRestrictions.length > 0) {
-            this.dietaryRestrictions.forEach((diet) => {
-              params.append('diet', diet.toLowerCase())
-            })
-          }
-        }
-
-        const response = await axios.get(`http://157.245.198.241:5000/api/search-recipes?${params.toString()}`)
-        this.searchResults = response.data
-      } catch (error) {
-        console.error('Error searching recipes:', error)
-      } finally {
-        this.isLoading = false
       }
-    },
+
+      // Add dietary restrictions as diet parameters
+      if (this.dietaryRestrictions.length > 0) {
+        this.dietaryRestrictions.forEach((diet) => {
+          params.append('diet', diet.toLowerCase())
+        })
+      }
+    }
+
+    const response = await axios.get(`http://157.245.198.241:5000/api/search-recipes?${params.toString()}`)
+    this.searchResults = response.data
+  } catch (error) {
+    console.error('Error searching recipes:', error)
+  } finally {
+    this.isLoading = false
+  }
+},
     async makeRequest(url, method, body = null) {
       const headers = {
         'Content-Type': 'application/json',
@@ -261,32 +261,39 @@ export default {
         console.error('Error fetching recipe:', error)
       }
     },
-    async addToFavourites(recipe) {
-  const recipeId = this.isEDAMAM ? recipe.id : recipe.UserMadeRecipeID
-  
-  await this.makeRequest('/favourites', 'POST', {
-    recipeId: recipeId,
-    isEdamamRecipe: this.isEDAMAM
-  })
-
-  if (this.isEDAMAM) {
-    this.favourites.push({
+    async addToFavourites(recipeId) {
+      const recipeId = this.isEDAMAM ? recipe.id : recipe.UserMadeRecipeID
+  console.log('Adding to favorites:', {
+    recipe,
+    isEDAMAM: this.isEDAMAM,
+    recipeId
+  });
+      await this.makeRequest('/favourites', 'POST', {
+        recipeId: recipeId,
+        isEdamamRecipe: this.isEDAMAM
+      })
+      if (this.isEDAMAM) {
+    console.log('EDAMAM recipe being added to favorites array:', {
       id: recipe.id,
-      title: recipe.title,  // Changed from recipe_name to match backend
       source: recipe.source,
+      recipe_name: recipe.title,
       calories: recipe.calories,
-      totalTime: recipe.totalTime,  // Changed from cooking_time to match backend
-      url: recipe.url,
-      isEdamamRecipe: 1
-    })
-  } else {
-    this.favourites.push({
-      id: recipe.UserMadeRecipeID,
-      recipe_name: recipe.RecipeName,
-      isEdamamRecipe: 0
-    })
+      cooking_time: recipe.totalTime,
+      url: recipe.url
+    });
   }
-},
+
+      const recipeToAdd = this.isEDAMAM
+        ? this.searchResults.find((recipe) => recipe.id === recipeId)
+        : this.searchResults.find((recipe) => recipe.UserMadeRecipeID === recipeId)
+
+      if (recipeToAdd) {
+        this.favourites.push({
+          id: recipeToAdd.id || recipeToAdd.UserMadeRecipeID,
+          recipe_name: recipeToAdd.title || recipeToAdd.RecipeName
+        })
+      }
+    },
     async removeFromFavourites(recipeId) {
       await this.makeRequest(`/favourites/${recipeId}`, 'DELETE')
       this.favourites = this.favourites.filter((fav) => fav.id !== recipeId)

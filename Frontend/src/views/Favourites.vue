@@ -18,14 +18,14 @@
           </div>
         </div>
         <div v-else>
-  <h4>
-    <strong>{{ recipe.title }}</strong>  <!-- Changed from recipe_name to title -->
-  </h4>
-  <p>Calories: {{ Math.round(recipe.calories) }}</p>
-  <p>Cooking Time: {{ Math.round(recipe.totalTime) }}</p>  <!-- Changed from cooking_time to totalTime -->
-  <p>Source: {{ recipe.source }}</p>
-  <a :href="recipe.url" target="_blank">View Recipe</a>
-</div>
+          <h4>
+            <strong>{{ recipe.recipe_name }}</strong>
+          </h4>
+          <p>Calories: {{ Math.round(recipe.calories) }}</p>
+          <p>Cooking Time: {{ Math.round(recipe.cooking_time) }}</p>
+          <p>Source: {{ recipe.source }}</p>
+          <a :href="recipe.url" target="_blank">View Recipe</a>
+        </div>
         <div class="recipe-actions">
           <button @click="removeFromFavourites(recipe.id)">Remove from Favourites</button>
           <!-- <button @click="editRecipe(recipe)">Edit</button>
@@ -140,7 +140,36 @@ export default {
       this.favourites = []
       try {
         const result = await this.makeRequest('/favourites', 'GET')
-
+        console.log('Raw favorites from API:', result);
+        for (const fav of result) {
+      if (fav.isEdamamRecipe == 0) {
+        const recipeDetails = await this.displayUserRecipe(fav.RecipeID)
+        console.log('User recipe details:', recipeDetails);
+      } else {
+        try {
+          const response = await axios.get(`/api/recipe/${fav.RecipeID}`, {
+            params: { isEdamamRecipe: true }
+          })
+          console.log('EDAMAM recipe response:', response.data);
+          // Log the object being pushed to favorites
+          console.log('Adding to favorites array:', {
+            isEdamamRecipe: 1,
+            id: response.data.id,
+            source: response.data.source,
+            recipe_name: response.data.title,
+            calories: response.data.calories,
+            cooking_time: response.data.totalTime,
+            url: response.data.url
+          });
+        } catch (error) {
+          console.error('Error fetching EDAMAM recipe:', error);
+        }
+      }
+    }
+    console.log('Final favorites array:', this.favourites);
+  } catch (error) {
+    console.error('Error in getFavourites:', error);
+  }
         // Map each favorite to a promise to process recipes concurrently
         const favouritePromises = result.map(async (fav) => {
           if (fav.isEdamamRecipe == 0) {
