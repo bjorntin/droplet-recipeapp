@@ -4,7 +4,7 @@
       <div class="icon">
         <img src="../assets/icon.png" alt="icon" width="150px" />
       </div>
-      <h2 class="title">Points Redemption</h2>
+      <h2 class="title">✨ Points Redemption ✨</h2>
       <p><strong>Username:</strong> {{ currentUsername }}</p>
 
       <!-- Display user's points balance -->

@@ -320,7 +320,7 @@ input[type='checkbox'] + label {
   width: unset;
   margin: 0 0.5em 0 0;
   vertical-align: middle;
-  color: #3d6a52;
+  color: #5d4037;
 }
 
 
