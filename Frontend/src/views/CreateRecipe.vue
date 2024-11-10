@@ -1,11 +1,11 @@
 <template>
-  <div class="create-recipe">
-    <h1>Create New Recipe</h1>
-    <!-- Form for creating a new recipe -->
+  <div class="page-display">
+    <h1>🍳 Create New Recipe</h1>
+
     <form @submit.prevent="createRecipe">
       <div>
         <label for="recipeName">Recipe Name:</label>
-        <input v-model="recipe.recipeName" id="recipeName" required />
+        <input type="text" v-model="recipe.recipeName" id="recipeName" required />
       </div>
       <div class="prep-time">
         <label>Preparation Time: Hours/Minutes</label>
@@ -41,6 +41,7 @@
       </div>
       <button type="submit">Create Recipe</button>
     </form>
+
     <!-- Message to show success or error -->
     <p v-if="message" :class="{ success: isSuccess, error: !isSuccess }">{{ message }}</p>
   </div>
@@ -150,15 +151,10 @@ export default {
 </script>
 
 <style scoped>
-h1 {
-  color: #5d4037;
-}
+@import "../assets/style.css";
 
-/* Styles remain unchanged */
-.create-recipe {
-  max-width: 500px;
-  margin: 0 auto;
-  padding: 20px;
+.page-display {
+  max-width: 800px;
 }
 
 form {
@@ -170,12 +166,22 @@ label {
   margin-top: 10px;
 }
 
-input,
+input[type="text"],
+input[type="number"],
 textarea {
   width: 100%;
-  padding: 5px;
-  margin-top: 5px;
+  /* padding: 5px;
+  margin-top: 5px; */
 }
+
+button {
+  margin-top: 20px;
+}
+
+
+
+
+
 
 .prep-time {
   margin-top: 10px;
@@ -188,19 +194,6 @@ textarea {
 
 .time-inputs input {
   width: 50%;
-}
-
-button {
-  margin-top: 20px;
-  padding: 10px;
-  background-color: #5e9b77;
-  color: #e6e6e6;
-  border: none;
-  cursor: pointer;
-}
-
-button:hover {
-  background-color: #4b8063;
 }
 
 .success {

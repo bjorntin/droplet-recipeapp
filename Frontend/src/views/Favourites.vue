@@ -1,6 +1,7 @@
 <template>
-  <div class="favourites">
-    <h1>Favourite Recipes</h1>
+  <div class="page-display">
+    <h1>❤️ Favourite Recipes</h1>
+    
     <div v-if="favourites.length" class="recipe-list">
       <div v-for="recipe in favourites" :key="recipe.id" class="recipe-card">
         <div v-if="recipe.isEdamamRecipe == 0">
@@ -173,15 +174,17 @@ export default {
 </script>
 
 <style scoped>
-.favourites {
+@import "../assets/style.css";
+
+/* .favourites {
   max-width: 800px;
   margin: 0 auto;
   padding: 20px;
-}
+} */
 
-h1 {
+/* h1 {
   color: #5d4037;
-}
+} */
 
 ul {
   list-style-type: none;

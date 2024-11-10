@@ -1,16 +1,14 @@
 <template>
-  <div class="community-recipes">
-    <h1>Community Recipes</h1>
+  <div class="page-display">
+    <h1>🏘️ Community Recipes</h1>
 
-    <div class="filters">
-      <div class="search-bar">
-        <input
-          type="text"
-          v-model="searchQuery"
-          placeholder="Search recipes (use commas to search multiple terms, e.g. 'chicken, fish')"
-          @input="debouncedSearch"
-        />
-      </div>
+    <div class="main-card main-card-items">
+      <input
+        type="text"
+        v-model="searchQuery"
+        placeholder="Search recipes (use commas to search multiple terms, e.g. 'chicken, fish')"
+        @input="debouncedSearch"
+      />
       <div class="filter-options">
         <select v-model="ratingFilter" class="rating-filter">
           <option value="0">All Ratings</option>
@@ -403,16 +401,26 @@ export default {
 </script>
 
 <style scoped>
-h1 {
-  color: #5d4037;
-}
+@import "../assets/style.css";
 
-
-.community-recipes {
+/* .community-recipes {
   padding: 20px;
   max-width: 1200px;
-  margin: 0 auto;
+  margin: 0;
+} */
+
+.main-card-items {
+  align-items: start;
 }
+
+input[type="text"] {
+  flex: 1;
+  min-width: 250px;
+}
+
+
+
+
 
 .loading,
 .no-results {
@@ -421,18 +429,13 @@ h1 {
   color: #666;
 }
 
-.filters {
+/* .filters {
   margin-bottom: 20px;
   display: flex;
   gap: 20px;
   align-items: flex-start;
   flex-wrap: wrap;
-}
-
-.search-bar {
-  flex: 1;
-  min-width: 250px;
-}
+} */
 
 @media (max-width: 768px) {
   .filters {
@@ -454,6 +457,7 @@ h1 {
     width: 100%;
   }
 }
+
 .search-bar input {
   width: 100%;
   padding: 8px;

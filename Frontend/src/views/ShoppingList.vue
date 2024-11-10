@@ -1,9 +1,9 @@
 <template>
-  <div class="shopping-list">
-    <h1>Shopping List</h1>
-    <div class="add-item">
-      <input v-model="newItem" placeholder="Add new item" />
-      <input id="quantity" v-model="quantity" placeholder="Quantity" />
+  <div class="page-display">
+    <h1>🛒 Shopping List</h1>
+    <div class="main-card main-card-items">
+      <input type="text" v-model="newItem" placeholder="Add new item" id="item" />
+      <input type="text" v-model="quantity" placeholder="Quantity" id="quantity"/>
       <button @click="addItem">Add</button>
     </div>
     <ul v-if="items.length">
@@ -87,33 +87,37 @@ export default {
 </script>
 
 <style scoped>
-.shopping-list {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 20px;
-}
+@import "../assets/style.css";
 
-h1 {
-  color: #5d4037;
-}
-
-.add-item {
-  display: flex;
+.main-card-items {
   align-items: start;
-  margin-bottom: 20px;
+}
+
+#item {
+  flex: 2;
 }
 
 #quantity {
-  width: 10px;
+  flex: 1;
 }
 
-input {
+/* .add-item {
+  display: flex;
+  align-items: start;
+  margin-bottom: 20px;
+} */
+
+/* #quantity {
+  width: 10px;
+} */
+
+/* input {
   flex-grow: 1;
   padding: 10px;
   border: 1px solid #795548;
   border-radius: 4px;
   margin-right: 5px;
-}
+} */
 
 button {
   padding: 10px 15px;

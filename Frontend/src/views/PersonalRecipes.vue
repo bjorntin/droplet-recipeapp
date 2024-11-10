@@ -1,6 +1,7 @@
 <template>
-  <div class="personal-recipes">
-    <h1>My Recipes</h1>
+  <div class="page-display">
+    <h1>🧑‍🍳 My Recipes</h1>
+    
     <!-- Show loading message while fetching recipes -->
     <div v-if="loading">Loading...</div>
     <!-- Show error message if there's an error -->
@@ -256,15 +257,17 @@ export default {
 </script>
 
 <style scoped>
-h1 {
-  color: #5d4037;
-}
+@import "../assets/style.css";
 
-.personal-recipes {
+/* h1 {
+  color: #5d4037;
+} */
+
+/* .personal-recipes {
   max-width: 800px;
   margin: 0 auto;
   padding: 20px;
-}
+} */
 
 .recipe-list {
   display: grid;
