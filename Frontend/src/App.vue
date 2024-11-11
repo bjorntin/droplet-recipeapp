@@ -188,27 +188,27 @@ function logout() {
             </div>
             <p class="app-navbar-brand">QuickEats</p>
           </div>
-          <ul class="navbar-nav ms-auto d-flex align-items-center gap-3">
+          <ul class="navbar-nav ms-auto d-flex align-items-center gap-3 row">
             <template v-if="isLoggedIn">
-              <li class="nav-item">
+              <li class="nav-item col">
                 <RouterLink class="nav-link app-nav-link rounded-2" to="/recipe-search" @click="closeNavbar"
                   >Recipe Search</RouterLink
                 >
               </li>
-              <li class="nav-item">
+              <li class="nav-item col">
                 <RouterLink class="nav-link app-nav-link rounded-2" to="/profile" @click="closeNavbar"
                   >Profile</RouterLink
                 >
               </li>
-              <li class="nav-item">
+              <li class="nav-item col">
                 <a class="nav-link app-nav-link rounded-2" href="#" @click.prevent="logout">Logout</a>
               </li>
             </template>
             <template v-else>
-              <li class="nav-item">
+              <li class="nav-item col">
                 <RouterLink class="nav-link app-nav-link rounded-2" to="/signup">Sign Up</RouterLink>
               </li>
-              <li class="nav-item">
+              <li class="nav-item col">
                 <RouterLink class="nav-link app-nav-link rounded-2" to="/login">Login</RouterLink>
               </li>
             </template>

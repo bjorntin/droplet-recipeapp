@@ -315,11 +315,25 @@ body {
   }
 }
 
+@media (max-width: 574px) {
+  .app-navbar-brand {
+    font-size: 20px;
+  }
+  .nav-link.app-nav-link {
+    font-size: 12px;
+    padding: 4px !important;
+  }
+}
+
 /* Small Mobile Styles */
 @media (max-width: 480px) {
   .intro-text,
   .app-intro-text {
     font-size: 1.5rem;
+  }
+
+  .navbar-icon-box, .app-navbar-icon-box {
+    margin-left: 0px !important;
   }
 
   .climate-text,
@@ -345,7 +359,7 @@ body {
   }
 
   .nav-link.app-nav-link {
-    padding: 6px 10px !important;
+    padding: none !important;
     font-size: 0.85rem;
   }
 
