@@ -2,7 +2,7 @@
   <div class="community-recipes">
     <h1>🏘️ Community Recipes</h1>
 
-    <div class="filters">
+    <div class="filters main-card">
       <div class="search-bar">
         <input
           type="text"
@@ -283,7 +283,9 @@ export default {
 
         // Fetch reviews for each recipe
         for (let recipe of this.recipes) {
-          const reviewsResponse = await axios.get(`http://157.245.198.241:5000/api/recipe-reviews/${recipe.UserMadeRecipeID}`)
+          const reviewsResponse = await axios.get(
+            `http://157.245.198.241:5000/api/recipe-reviews/${recipe.UserMadeRecipeID}`
+          )
           recipe.reviews = reviewsResponse.data
         }
       } catch (error) {
@@ -403,15 +405,13 @@ export default {
 </script>
 
 <style scoped>
-
-
-@import "../assets/style.css";
+@import '../assets/style.css';
 
 .main-card-items {
   align-items: start;
 }
 
-input[type="text"] {
+input[type='text'] {
   flex: 1;
   min-width: 250px;
 }
