@@ -1,31 +1,38 @@
 <template>
-  <div class="recipe-search">
-    <h1>Recipe Search</h1>
-    <div class="search-form">
-      <input
-        type="text"
-        v-model="searchQuery"
-        placeholder="Enter ingredients or recipe name"
-        @keyup.enter="searchRecipes"
-      />
-      <div class="filter-options">
+  <div class="page-display">
+    <h1>🍲 Recipe Search</h1>
+
+    <div class="main-card">
+      <div class="main-card-items">
+        <input
+          type="text"
+          v-model="searchQuery"
+          placeholder="Enter ingredients or recipe name"
+          @keyup.enter="searchRecipes"
+        />
+        <!-- <div class="filter-options">
+          <label class="filter-checkbox">
+            <input type="checkbox" v-model="applyHealthFilters" />
+            Apply My Dietary Restrictions
+          </label>
+        </div> -->
         <label class="filter-checkbox">
-          <input type="checkbox" v-model="applyHealthFilters" />
-          Apply My Dietary & Allergy Filters
+          <div class="inline"><input type="checkbox" v-model="applyHealthFilters" />
+          Apply My Dietary Restrictions</div>
         </label>
+        <button @click="searchRecipes" :disabled="isLoading">
+          {{ isLoading ? 'Searching...' : 'Search' }}
+        </button>
       </div>
-      <button @click="searchRecipes" :disabled="isLoading">
-        {{ isLoading ? 'Searching...' : 'Search' }}
-      </button>
     </div>
-    <div v-if="searchResults.length">
-      <div id="search-results">
-        <h2>Search Results</h2>
-        <button v-if="isEDAMAM" @click="displayUserRecipes">User Recipes</button>
-        <button v-else @click="searchRecipes" :disabled="isLoading">EDAMAM Recipes</button>
-      </div>
+
+    <div v-if="searchResults.length" class="results-section">
+      <h2>Search Results</h2>
+      <button v-if="isEDAMAM" @click="displayUserRecipes" class="toggle-button">User Recipes</button>
+      <button v-else @click="searchRecipes" :disabled="isLoading" class="toggle-button">EDAMAM Recipes</button>
       <ul class="results" v-if="isEDAMAM && !isLoading">
-        <li v-for="recipe in searchResults" :key="recipe.id">
+        <li v-for="recipe in searchResults" :key="recipe.id" class="recipe-item">
+          <!-- Favourite icon and recipe info -->
           <img
             v-if="favourites.some((fav) => fav.recipe_name === recipe.title)"
             src="../assets/favourite_checked.png"
@@ -41,19 +48,18 @@
             @click="addToFavourites(recipe)"
           />
           <div class="recipe-info">
-            <h4>
-              <strong>{{ recipe.title }}</strong>
-            </h4>
+            <h4><strong>{{ recipe.title }}</strong></h4>
             <p>Calories: {{ Math.round(recipe.calories) }}</p>
-            <p>Cooking Time: {{ Math.round(recipe.totalTime) }}</p>
+            <p>Cooking Time: {{ Math.round(recipe.totalTime) }} mins</p>
             <p>Source: {{ recipe.source }}</p>
-            <a :href="recipe.url" target="_blank">View Recipe</a>
+            <a :href="recipe.url" target="_blank" class="recipe-link">View Recipe</a>
           </div>
           <img :src="recipe.image" :alt="recipe.title" class="recipe-image" />
         </li>
       </ul>
+      <!-- User-made recipes -->
       <ul class="results" v-else>
-        <li v-for="recipe in searchResults" :key="recipe.UserMadeRecipeID">
+        <li v-for="recipe in searchResults" :key="recipe.UserMadeRecipeID" class="recipe-item">
           <img
             v-if="favourites.some((fav) => fav.recipe_name === recipe.RecipeName)"
             src="../assets/favourite_checked.png"
@@ -69,17 +75,13 @@
             @click="addToFavourites(recipe)"
           />
           <div class="recipe-info">
-            <h4>
-              <strong>{{ recipe.RecipeName }}</strong>
-            </h4>
+            <h4><strong>{{ recipe.RecipeName }}</strong></h4>
             <p>Made By: {{ recipe.Username }}</p>
             <p>Prep Time: {{ formatTime(recipe.PrepTime) }}</p>
             <p>Serving Size: {{ recipe.ServingSize }}</p>
             <p>Ingredients: {{ recipe.IngredientList }}</p>
-            <div style="margin-bottom: 20px">
-              <p>Steps:</p>
-              <ol v-html="formatSteps(recipe.PrepSteps)"></ol>
-            </div>
+            <p>Steps:</p>
+            <ol v-html="formatSteps(recipe.PrepSteps)"></ol>
           </div>
         </li>
       </ul>
@@ -304,110 +306,105 @@ export default {
 </script>
 
 <style scoped>
-.recipe-search {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
+@import "../assets/style.css";
+
+input[type="text"] {
+  width: 60%;
 }
 
-h1,
-h2 {
+input[type='checkbox'] + label {
+  display: inline-block;
+}
+
+.inline {
+  width: unset;
+  margin: 0 0.5em 0 0;
+  vertical-align: middle;
   color: #5d4037;
 }
 
-.search-form {
-  margin-bottom: 20px;
-}
 
-input {
-  padding: 10px;
-  width: 70%;
-  border: 1px solid #795548;
-  border-radius: 4px;
-  margin-right: 5px;
-}
 
-.filter-options {
+/* .filter-options {
   margin: 10px 0;
 }
 
 .filter-checkbox {
   display: flex;
   align-items: center;
-  gap: 8px;
-  color: #5d4037;
+  color: #3d6a52;
   cursor: pointer;
-}
+} */
 
-.filter-checkbox input[type='checkbox'] {
-  width: auto;
-  cursor: pointer;
-}
-
-button {
+/* .search-button {
   padding: 10px 20px;
   background-color: #5e9b77;
   color: #e6e6e6;
   border: none;
-  border-radius: 4px;
+  border-radius: 8px;
   cursor: pointer;
 }
 
-button:hover {
+.search-button:hover {
   background-color: #4b8063;
+} */
+
+.results-section h2 {
+  color: #4b8063;
+  margin-top: 20px;
 }
 
-ul {
+.toggle-button {
+  margin: 10px 0;
+  padding: 8px 12px;
+  background-color: #5e9b77;
+  color: #e6e6e6;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+ul.results {
   list-style-type: none;
   padding: 0;
 }
 
-li {
-  margin: 10px 0;
-  padding: 10px;
-  background-color: #e0ebe4;
-  border-radius: 4px;
+.recipe-item {
   display: flex;
   align-items: flex-start;
+  padding: 15px;
+  background-color: #e0ebe4;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .recipe-info {
   flex: 1;
-  /* margin-bottom: 20px; */
-  margin: 10px;
+  margin-right: 10px;
 }
 
 .recipe-image {
   width: 150px;
   height: 150px;
   object-fit: cover;
-  margin-left: auto;
-  border-radius: 4px;
+  border-radius: 8px;
+  margin-left: 10px;
 }
 
-#search-results {
-  display: flex;
-  align-items: center;
-}
-
-#search-results button {
-  margin-left: 20px;
-}
-
-#fav-button {
-  margin-left: 20px;
-  padding: 10px;
-  font-size: 0.8em;
+.recipe-link {
+  color: #4b8063;
+  text-decoration: underline;
 }
 
 .fav-icon {
   width: 24px;
   height: 24px;
-  object-fit: cover;
-  margin-left: auto;
-  border-radius: 4px;
-  margin-top: 16px;
-  margin-right: 10px;
   cursor: pointer;
+  margin-right: 15px;
+}
+
+.fav-icon:hover {
+  opacity: 0.8;
 }
 </style>

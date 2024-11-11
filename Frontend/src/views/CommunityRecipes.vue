@@ -1,15 +1,25 @@
-<!-- Previous template and script sections remain unchanged -->
 
 <style scoped>
-h1 {
-  color: #5d4037;
-}
+@import "../assets/style.css";
 
 .community-recipes {
   padding: 20px;
   max-width: 1200px;
-  margin: 0 auto;
+  margin: 0;
+} */
+
+.main-card-items {
+  align-items: start;
 }
+
+input[type="text"] {
+  flex: 1;
+  min-width: 250px;
+}
+
+
+
+
 
 .loading,
 .no-results {
@@ -18,18 +28,13 @@ h1 {
   color: #666;
 }
 
-.filters {
+/* .filters {
   margin-bottom: 20px;
   display: flex;
   gap: 20px;
   align-items: flex-start;
   flex-wrap: wrap;
-}
-
-.search-bar {
-  flex: 1;
-  min-width: 250px;
-}
+} */
 
 @media (max-width: 768px) {
   .filters {
