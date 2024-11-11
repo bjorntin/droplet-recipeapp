@@ -1,6 +1,6 @@
 <template>
   <div class="community-recipes">
-    <h1>Community Recipes</h1>
+    <h1>🏘️ Community Recipes</h1>
 
     <div class="filters">
       <div class="search-bar">
@@ -403,6 +403,19 @@ export default {
 </script>
 
 <style scoped>
+
+
+@import "../assets/style.css";
+
+.main-card-items {
+  align-items: start;
+}
+
+input[type="text"] {
+  flex: 1;
+  min-width: 250px;
+}
+
 h1 {
   color: #5d4037;
 }
