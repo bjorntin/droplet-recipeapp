@@ -1,0 +1,13 @@
+node_modules/
+dist/
+.git/
+.vscode/
+*.log
+.env
+.DS_Store
+Frontend/node_modules/
+Backend/node_modules/
+Frontend/dist/
+Frontend/.vscode/
+Backend/.vscode/
+Frontend/vulnerabilities/

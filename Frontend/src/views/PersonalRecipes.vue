@@ -122,7 +122,10 @@ export default {
     const fetchRecipes = async () => {
       try {
         const response = await fetch('http://157.245.198.241:5000/api/personal-recipes', {
-          headers: { 'X-Username': localStorage.getItem('loggedInUser') }
+          headers: { 
+            'X-Username': localStorage.getItem('loggedInUser'),
+            'Content-Type': 'application/json'
+          }
         })
         if (response.ok) {
           recipes.value = await response.json()
@@ -220,15 +223,19 @@ export default {
         try {
           const response = await fetch(`http://157.245.198.241:5000/api/personal-recipes/${recipeId}`, {
             method: 'DELETE',
-            headers: { 'X-Username': localStorage.getItem('loggedInUser') }
+            headers: { 
+              'Content-Type': 'application/json',
+              'X-Username': localStorage.getItem('loggedInUser')
+            }
           })
           if (response.ok) {
             recipes.value = recipes.value.filter((r) => r.UserMadeRecipeID !== recipeId)
           } else {
-            throw new Error('Failed to delete recipe')
+            const errorData = await response.json()
+            throw new Error(errorData.error || 'Failed to delete recipe')
           }
         } catch (err) {
-          error.value = 'Failed to delete recipe'
+          error.value = `Failed to delete recipe: ${err.message}`
           console.error('Error deleting recipe:', err)
         }
       }

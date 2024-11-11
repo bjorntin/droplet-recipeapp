@@ -140,11 +140,49 @@ async function updatePersonalRecipe(username, recipeId, recipe) {
 }
 
 async function deletePersonalRecipe(username, recipeId) {
-  const result = await query(
-    'DELETE FROM UserMadeRecipe WHERE UserMadeRecipeID = ? AND Username = ?',
-    [recipeId, username]
-  )
-  return result.affectedRows > 0
+  try {
+    // First verify the recipe belongs to the user
+    const [recipe] = await query(
+      'SELECT * FROM UserMadeRecipe WHERE UserMadeRecipeID = ? AND Username = ?',
+      [recipeId, username]
+    )
+
+    if (!recipe) {
+      console.log('Recipe not found or does not belong to user:', username)
+      return false
+    }
+
+    // Begin transaction
+    await query('SET FOREIGN_KEY_CHECKS = 0')
+
+    try {
+      // Delete all reviews first
+      console.log('Deleting reviews for recipe:', recipeId)
+      await query('DELETE FROM Reviews WHERE UserMadeRecipeID = ?', [recipeId])
+      
+      // Then delete the recipe
+      console.log('Deleting recipe:', recipeId)
+      const result = await query(
+        'DELETE FROM UserMadeRecipe WHERE UserMadeRecipeID = ? AND Username = ?',
+        [recipeId, username]
+      )
+
+      // Re-enable foreign key checks
+      await query('SET FOREIGN_KEY_CHECKS = 1')
+
+      console.log('Delete result:', result)
+      return result.affectedRows > 0
+
+    } catch (error) {
+      // Re-enable foreign key checks even if there's an error
+      await query('SET FOREIGN_KEY_CHECKS = 1')
+      throw error
+    }
+
+  } catch (error) {
+    console.error('Error in deletePersonalRecipe:', error)
+    throw error
+  }
 }
 
 module.exports = {

@@ -24,11 +24,12 @@
           </p>
           <p v-else>No allergies set.</p>
 
-          <!-- Button to Update Dietary Restrictions -->
-          <button class="update-btn" @click="goToDietaryRestrictions">
+          
+        </div>
+        <!-- Button to Update Dietary Restrictions -->
+        <button class="update-btn" @click="goToDietaryRestrictions">
             Update Dietary Restrictions
           </button>
-        </div>
 
         <!-- Placeholder for User Points and Redeem Button -->
         <div class="profile-section">
