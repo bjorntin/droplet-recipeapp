@@ -1,10 +1,10 @@
 // Import all service modules
-const authService = require('./services/authService')
-const recipeService = require('./services/recipeService')
-const favouriteService = require('./services/favouriteService')
-const shoppingListService = require('./services/shoppingListService')
-const ratingService = require('./services/ratingService')
-const profileService = require('./services/profileService')
+const authService = require("./services/authService");
+const recipeService = require("./services/recipeService");
+const favouriteService = require("./services/favouriteService");
+const shoppingListService = require("./services/shoppingListService");
+const ratingService = require("./services/ratingService");
+const profileService = require("./services/profileService");
 
 // Re-export all services with the same interface as before
 module.exports = {
@@ -36,10 +36,11 @@ module.exports = {
   getUserPoints: ratingService.getUserPoints,
   redeemPoints: ratingService.redeemPoints,
   getTopRatedRecipes: ratingService.getTopRatedRecipes,
+  getRecipeReviews: ratingService.getRecipeReviews,
 
   // Profile services
   getDietaryInfo: profileService.getDietaryInfo,
   updateDietaryInfo: profileService.updateDietaryInfo,
   getAllergyInfo: profileService.getAllergyInfo,
-  updateAllergyInfo: profileService.updateAllergyInfo
-}
+  updateAllergyInfo: profileService.updateAllergyInfo,
+};

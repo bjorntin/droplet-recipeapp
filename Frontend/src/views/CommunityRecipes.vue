@@ -89,7 +89,7 @@
           </div>
 
           <!-- Reviews Section -->
-          <div class="reviews-section">
+          <!-- <div class="reviews-section">
             <button
               class="toggle-reviews"
               @click="toggleReviews(recipe.UserMadeRecipeID)"
@@ -111,7 +111,7 @@
                 <p class="review-description">{{ review.Description }}</p>
               </div>
             </div>
-          </div>
+          </div> -->
 
           <!-- Review Form -->
           <div class="review-section" v-if="showReviewForm === recipe.UserMadeRecipeID">
@@ -290,17 +290,17 @@ export default {
         this.recipes = response.data
 
         // Fetch reviews for each recipe
-        for (let recipe of this.recipes) {
-          try {
-            const reviewsResponse = await axios.get(
-              `${API_URL}/api/recipe-reviews/${recipe.UserMadeRecipeID}`
-            )
-            recipe.reviews = reviewsResponse.data
-          } catch (error) {
-            console.error(`Error fetching reviews for recipe ${recipe.UserMadeRecipeID}:`, error)
-            recipe.reviews = []
-          }
-        }
+        // for (let recipe of this.recipes) {
+        //   try {
+        //     const reviewsResponse = await axios.get(
+        //       `${API_URL}/api/recipe-reviews/${recipe.UserMadeRecipeID}`
+        //     )
+        //     recipe.reviews = reviewsResponse.data
+        //   } catch (error) {
+        //     console.error(`Error fetching reviews for recipe ${recipe.UserMadeRecipeID}:`, error)
+        //     recipe.reviews = []
+        //   }
+        // }
       } catch (error) {
         console.error('Error fetching recipes:', error)
         this.error = 'Unable to load recipes. Please try again later.'
