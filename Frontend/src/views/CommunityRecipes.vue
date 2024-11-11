@@ -1,9 +1,10 @@
 <template>
-  <div class="community-recipes">
+  <div class="container-fluid">
+  <div class="community-recipes row">
     <h1>🏘️ Community Recipes</h1>
 
-    <div class="filters main-card">
-      <div class="search-bar">
+    <div class="filters main-card row">
+      <div class="search-bar col-12 col-lg-6">
         <input
           type="text"
           v-model="searchQuery"
@@ -11,7 +12,7 @@
           @input="debouncedSearch"
         />
       </div>
-      <div class="filter-options">
+      <div class="filter-options col-12 col-lg-6">
         <select v-model="ratingFilter" class="rating-filter">
           <option value="0">All Ratings</option>
           <option value="5">5 Stars Only</option>
@@ -22,7 +23,7 @@
           <option value="no">No Ratings</option>
         </select>
       </div>
-      <div class="sort-options">
+      <div class="sort-options col">
         <div class="sort-label">Sort by rating:</div>
         <div class="radio-group">
           <label class="radio-label">
@@ -160,6 +161,7 @@
       </div>
     </div>
   </div>
+</div>
 </template>
 
 <script>
@@ -443,7 +445,15 @@ h1 {
 
 .search-bar {
   flex: 1;
-  min-width: 250px;
+  width: 100% !important
+}
+
+.radio-group {
+    width: 100%;
+  }
+  
+.rating-filter{
+  width: 100% !important;
 }
 
 @media (max-width: 768px) {
@@ -462,10 +472,6 @@ h1 {
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
-  }
-
-  .sort-options {
-    padding: 12px;
   }
 
   .radio-group {
@@ -500,6 +506,7 @@ h1 {
 }
 
 .search-bar input {
+  min-width: none !important;
   width: 100%;
   padding: 8px;
   border: 1px solid #ddd;
@@ -545,11 +552,11 @@ h1 {
   gap: 5px;
 }
 
-.recipes-grid {
+/* .recipes-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 20px;
-}
+} */
 
 .recipe-card {
   position: relative;

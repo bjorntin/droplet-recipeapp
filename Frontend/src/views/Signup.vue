@@ -2,7 +2,7 @@
   <div id="signup-page">
     <div id="signup-container">
       <div class="icon">
-        <img src="../assets/icon.png" alt="icon" width="200px" />
+        <img src="../assets/icon.png" alt="icon" class="img-fluid" />
       </div>
       <h1 class="title">Sign Up</h1>
       <form @submit.prevent="handleSignup" class="signup-form">
@@ -233,6 +233,11 @@ button:disabled {
   }
   60% {
     transform: translateY(-15px);
+  }
+}
+@media(min-width: 576px) {
+  .img-fluid {
+    max-width: 200px;
   }
 }
 </style>

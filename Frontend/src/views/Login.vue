@@ -89,7 +89,7 @@ export default {
   <div id="login-page">
     <div id="login-container">
       <div class="icon">
-        <img src="../assets/icon.png" alt="icon" width="200px" />
+        <img class="img-fluid" src="../assets/icon.png" alt="icon" />
       </div>
       <h1 class="title">Login</h1>
       <form id="login-form">
@@ -188,6 +188,11 @@ button:hover {
   }
   60% {
     transform: translateY(-15px);
+  }
+}
+@media(min-width: 576px) {
+  .img-fluid {
+    max-width: 200px;
   }
 }
 </style>

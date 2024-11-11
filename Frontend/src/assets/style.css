@@ -48,6 +48,7 @@ h1 {
 }
 
 input[type="text"], input[type="number"], textarea {
+  min-width: none;
   padding: 10px;
   border: 1px solid #4b8063;
   border-radius: 8px;
