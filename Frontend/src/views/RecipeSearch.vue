@@ -4,23 +4,25 @@
 
     <div class="main-card">
       <div class="main-card-items row">
-        <input style="min-width:100px" class="col"
+        <div class="col-12 col-md-8" style="margin-bottom:20px">
+        <input style="min-width:100px; width: 100%"
           type="text"
           v-model="searchQuery"
           placeholder="Enter ingredients or recipe name"
           @keyup.enter="searchRecipes"
         />
+        </div>
         <!-- <div class="filter-options">
           <label class="filter-checkbox">
             <input type="checkbox" v-model="applyHealthFilters" />
             Apply My Dietary Restrictions
           </label>
         </div> -->
-        <label class="col filter-checkbox">
+        <label class="col-7 col-md-2 filter-checkbox">
           <div class="inline"><input type="checkbox" v-model="applyHealthFilters" />
           Apply My Dietary Restrictions</div>
         </label>
-        <button class="col-12 col-md-4" @click="searchRecipes" :disabled="isLoading">
+        <button class="col-5 col-md-2" @click="searchRecipes" :disabled="isLoading">
           {{ isLoading ? 'Searching...' : 'Search' }}
         </button>
       </div>
@@ -30,8 +32,10 @@
       <h2>Search Results</h2>
       <button v-if="isEDAMAM" @click="displayUserRecipes" class="toggle-button">User Recipes</button>
       <button v-else @click="searchRecipes" :disabled="isLoading" class="toggle-button">EDAMAM Recipes</button>
-      <ul class="results" v-if="isEDAMAM && !isLoading">
-        <li v-for="recipe in searchResults" :key="recipe.id" class="recipe-item">
+      <ul class="results row" style="margin-bottom:20px" v-if="isEDAMAM && !isLoading">
+        <div v-for="recipe in searchResults" :key="recipe.id" class="col-12 col-md-6"  style="margin-bottom:20px">
+        <li class="recipe-item">
+          
           <!-- Favourite icon and recipe info -->
           <img
             v-if="favourites.some((fav) => fav.recipe_name === recipe.title)"
@@ -55,11 +59,14 @@
             <a :href="recipe.url" target="_blank" class="recipe-link">View Recipe</a>
           </div>
           <img :src="recipe.image" :alt="recipe.title" class="recipe-image" />
+          
         </li>
+      </div>
       </ul>
       <!-- User-made recipes -->
-      <ul class="results" v-else>
-        <li v-for="recipe in searchResults" :key="recipe.UserMadeRecipeID" class="recipe-item">
+      <ul class="results row" v-else>
+        <div v-for="recipe in searchResults" :key="recipe.UserMadeRecipeID" class="col-12 col-md-6"  style="margin-bottom:20px">
+        <li class="recipe-item">
           <img
             v-if="favourites.some((fav) => fav.recipe_name === recipe.RecipeName)"
             src="../assets/favourite_checked.png"
@@ -84,6 +91,7 @@
             <ol v-html="formatSteps(recipe.PrepSteps)"></ol>
           </div>
         </li>
+        </div>
       </ul>
     </div>
   </div>
@@ -377,6 +385,7 @@ ul.results {
   border-radius: 8px;
   margin-bottom: 15px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  height: 100%;
 }
 
 .recipe-info {
@@ -406,5 +415,9 @@ ul.results {
 
 .fav-icon:hover {
   opacity: 0.8;
+}
+
+.main-card-items{
+  gap: 0px !important;
 }
 </style>

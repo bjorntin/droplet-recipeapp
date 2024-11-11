@@ -43,105 +43,108 @@
     </div>
 
     <div v-if="loading" class="loading">Loading recipes...</div>
+    <div v-if="error" class="error-message">{{ error }}</div>
 
     <div v-else-if="filteredRecipes.length === 0" class="no-results">
       No recipes found matching your search.
     </div>
 
-    <div v-else class="recipes-grid">
-      <div v-for="recipe in filteredRecipes" :key="recipe.UserMadeRecipeID" class="recipe-card">
-        <img
-          v-if="isRecipeFavourite(recipe.UserMadeRecipeID)"
-          src="../assets/favourite_checked.png"
-          alt="fav-icon"
-          class="fav-icon"
-          @click="removeFromFavourites(recipe.UserMadeRecipeID)"
-        />
-        <img
-          v-else
-          src="../assets/favourite_unchecked.png"
-          alt="fav-icon"
-          class="fav-icon"
-          @click="addToFavourites(recipe.UserMadeRecipeID)"
-        />
-        <h3>
-          <strong>{{ recipe.RecipeName }}</strong>
-        </h3>
-        <div class="recipe-info">
-          <p><strong>By:</strong> {{ recipe.Username }}</p>
-          <p><strong>Prep Time:</strong> {{ recipe.PrepTime }}</p>
-          <p><strong>Serving Size:</strong> {{ recipe.ServingSize }}</p>
-          <div class="rating" v-if="recipe.AverageRating > 0">
-            <span> Rating: {{ Number(recipe.AverageRating).toFixed(1) }} </span>
-            <span
-              v-for="(star, index) in 5"
-              :key="index"
-              :class="getStarClass(recipe.AverageRating, index)"
-              class="fa fa-star"
-            ></span>
-            <span>({{ recipe.RatingCount }} reviews)</span>
-          </div>
-          <div class="rating" v-else>
-            <span>No ratings yet</span>
-          </div>
-        </div>
-
-        <!-- Reviews Section -->
-        <div class="reviews-section">
-          <button
-            class="toggle-reviews"
-            @click="toggleReviews(recipe.UserMadeRecipeID)"
-            v-if="recipe.reviews && recipe.reviews.length > 0"
-          >
-            {{ showReviewsFor === recipe.UserMadeRecipeID ? 'Hide Reviews' : 'Show Reviews' }}
-          </button>
-
-          <div
-            v-if="showReviewsFor === recipe.UserMadeRecipeID && recipe.reviews"
-            class="reviews-list"
-          >
-            <div v-for="review in recipe.reviews" :key="review.ReviewID" class="review-item">
-              <div class="review-header">
-                <span class="review-author">{{ review.Username }}</span>
-                <span class="review-rating">{{ '⭐'.repeat(review.Rating) }}</span>
-                <span class="review-date">{{ review.ReviewDate }}</span>
-              </div>
-              <p class="review-description">{{ review.Description }}</p>
+    <div v-else class="recipes-grid row g-2">
+      <div v-for="recipe in filteredRecipes" :key="recipe.UserMadeRecipeID" class="col-12 col-md-6">
+        <div class="recipe-card p-3">
+          <img
+            v-if="isRecipeFavourite(recipe.UserMadeRecipeID)"
+            src="../assets/favourite_checked.png"
+            alt="fav-icon"
+            class="fav-icon"
+            @click="removeFromFavourites(recipe.UserMadeRecipeID)"
+          />
+          <img
+            v-else
+            src="../assets/favourite_unchecked.png"
+            alt="fav-icon"
+            class="fav-icon"
+            @click="addToFavourites(recipe.UserMadeRecipeID)"
+          />
+          <h3>
+            <strong>{{ recipe.RecipeName }}</strong>
+          </h3>
+          <div class="recipe-info">
+            <p><strong>By:</strong> {{ recipe.Username }}</p>
+            <p><strong>Prep Time:</strong> {{ recipe.PrepTime }}</p>
+            <p><strong>Serving Size:</strong> {{ recipe.ServingSize }}</p>
+            <div class="rating" v-if="recipe.AverageRating > 0">
+              <span> Rating: {{ Number(recipe.AverageRating).toFixed(1) }} </span>
+              <span
+                v-for="(star, index) in 5"
+                :key="index"
+                :class="getStarClass(recipe.AverageRating, index)"
+                class="fa fa-star"
+              ></span>
+              <span>({{ recipe.RatingCount }} reviews)</span>
+            </div>
+            <div class="rating" v-else>
+              <span>No ratings yet</span>
             </div>
           </div>
-        </div>
 
-        <!-- Review Form -->
-        <div class="review-section" v-if="showReviewForm === recipe.UserMadeRecipeID">
-          <h3>Add Review</h3>
-          <div class="rating-input">
-            <select v-model="newReview.rating">
-              <option value="1">1 Star</option>
-              <option value="2">2 Stars</option>
-              <option value="3">3 Stars</option>
-              <option value="4">4 Stars</option>
-              <option value="5">5 Stars</option>
-            </select>
-          </div>
-          <textarea
-            v-model="newReview.description"
-            placeholder="Write your review here..."
-          ></textarea>
-          <div class="review-buttons">
-            <button @click="submitReview(recipe.UserMadeRecipeID)">Submit Review</button>
-            <button @click="showReviewForm = null">Cancel</button>
-          </div>
-        </div>
+          <!-- Reviews Section -->
+          <div class="reviews-section">
+            <button
+              class="toggle-reviews"
+              @click="toggleReviews(recipe.UserMadeRecipeID)"
+              v-if="recipe.reviews && recipe.reviews.length > 0"
+            >
+              {{ showReviewsFor === recipe.UserMadeRecipeID ? 'Hide Reviews' : 'Show Reviews' }}
+            </button>
 
-        <div class="recipe-actions">
-          <button
-            v-if="isLoggedIn && recipe.Username !== currentUsername"
-            @click="showReviewForm = recipe.UserMadeRecipeID"
-            class="action-button"
-          >
-            Add Review
-          </button>
-          <button @click="viewRecipeDetails(recipe)" class="action-button">View Details</button>
+            <div
+              v-if="showReviewsFor === recipe.UserMadeRecipeID && recipe.reviews"
+              class="reviews-list"
+            >
+              <div v-for="review in recipe.reviews" :key="review.ReviewID" class="review-item">
+                <div class="review-header">
+                  <span class="review-author">{{ review.Username }}</span>
+                  <span class="review-rating">{{ '⭐'.repeat(review.Rating) }}</span>
+                  <span class="review-date">{{ review.ReviewDate }}</span>
+                </div>
+                <p class="review-description">{{ review.Description }}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Review Form -->
+          <div class="review-section" v-if="showReviewForm === recipe.UserMadeRecipeID">
+            <h3>Add Review</h3>
+            <div class="rating-input">
+              <select v-model="newReview.rating">
+                <option value="1">1 Star</option>
+                <option value="2">2 Stars</option>
+                <option value="3">3 Stars</option>
+                <option value="4">4 Stars</option>
+                <option value="5">5 Stars</option>
+              </select>
+            </div>
+            <textarea
+              v-model="newReview.description"
+              placeholder="Write your review here..."
+            ></textarea>
+            <div class="review-buttons">
+              <button @click="submitReview(recipe.UserMadeRecipeID)">Submit Review</button>
+              <button @click="showReviewForm = null">Cancel</button>
+            </div>
+          </div>
+
+          <div class="recipe-actions">
+            <button
+              v-if="isLoggedIn && recipe.Username !== currentUsername"
+              @click="showReviewForm = recipe.UserMadeRecipeID"
+              class="action-button"
+            >
+              Add Review
+            </button>
+            <button @click="viewRecipeDetails(recipe)" class="action-button">View Details</button>
+          </div>
         </div>
       </div>
     </div>
@@ -167,6 +170,7 @@
 <script>
 import axios from 'axios'
 import { inject } from 'vue'
+import API_URL from '../config/api'
 
 export default {
   name: 'CommunityRecipes',
@@ -187,6 +191,7 @@ export default {
       showReviewForm: null,
       showReviewsFor: null,
       loading: false,
+      error: null,
       ratingFilter: '0',
       newReview: {
         rating: 5,
@@ -279,19 +284,30 @@ export default {
     },
     async fetchRecipes() {
       this.loading = true
+      this.error = null
       try {
-        const response = await axios.get('http://157.245.198.241:5000/api/all-personal-recipes')
+        const response = await axios.get(`${API_URL}/api/all-personal-recipes`)
         this.recipes = response.data
 
         // Fetch reviews for each recipe
         for (let recipe of this.recipes) {
-          const reviewsResponse = await axios.get(
-            `http://157.245.198.241:5000/api/recipe-reviews/${recipe.UserMadeRecipeID}`
-          )
-          recipe.reviews = reviewsResponse.data
+          try {
+            const reviewsResponse = await axios.get(
+              `${API_URL}/api/recipe-reviews/${recipe.UserMadeRecipeID}`
+            )
+            recipe.reviews = reviewsResponse.data
+          } catch (error) {
+            console.error(`Error fetching reviews for recipe ${recipe.UserMadeRecipeID}:`, error)
+            recipe.reviews = []
+          }
         }
       } catch (error) {
         console.error('Error fetching recipes:', error)
+        this.error = 'Unable to load recipes. Please try again later.'
+        if (error.response) {
+          console.error('Response data:', error.response.data)
+          console.error('Response status:', error.response.status)
+        }
       } finally {
         this.loading = false
       }
@@ -310,7 +326,7 @@ export default {
 
       try {
         await axios.post(
-          'http://157.245.198.241:5000/api/rate-recipe',
+          `${API_URL}/api/rate-recipe`,
           {
             userMadeRecipeId: recipeId,
             rating: Number(this.newReview.rating),
@@ -345,14 +361,17 @@ export default {
         'Content-Type': 'application/json',
         'X-Username': this.username
       }
-      const options = { method, headers }
-      if (body) options.body = JSON.stringify(body)
       try {
-        const response = await fetch(`http://157.245.198.241:5000/api${url}`, options)
-        return await response.json()
+        const response = await axios({
+          method,
+          url: `${API_URL}/api${url}`,
+          headers,
+          data: body
+        })
+        return response.data
       } catch (error) {
-        console.error('Error during fetch:', error)
-        return { error: 'An error occurred (search recipes).' }
+        console.error('Error during request:', error)
+        throw error
       }
     },
     async getFavourites() {
@@ -369,7 +388,6 @@ export default {
       } catch (error) {
         console.error('Error fetching favourites:', error)
       }
-      console.log(this.favourites)
     },
     async displayUserRecipe(recipeId) {
       try {
@@ -377,25 +395,36 @@ export default {
         return result
       } catch (error) {
         console.error('Error fetching recipe:', error)
+        throw error
       }
     },
     async addToFavourites(recipeId) {
-      await this.makeRequest('/favourites', 'POST', {
-        recipeId: recipeId,
-        isEdamamRecipe: false
-      })
+      try {
+        await this.makeRequest('/favourites', 'POST', {
+          recipeId: recipeId,
+          isEdamamRecipe: false
+        })
 
-      this.favourites = [
-        ...this.favourites,
-        {
-          id: recipeId,
-          recipe_name: this.recipes.find((r) => r.UserMadeRecipeID === recipeId).RecipeName
-        }
-      ]
+        this.favourites = [
+          ...this.favourites,
+          {
+            id: recipeId,
+            recipe_name: this.recipes.find((r) => r.UserMadeRecipeID === recipeId).RecipeName
+          }
+        ]
+      } catch (error) {
+        console.error('Error adding to favourites:', error)
+        alert('Error adding recipe to favourites')
+      }
     },
     async removeFromFavourites(recipeId) {
-      await this.makeRequest(`/favourites/${recipeId}`, 'DELETE')
-      this.favourites = this.favourites.filter((fav) => fav.id !== recipeId)
+      try {
+        await this.makeRequest(`/favourites/${recipeId}`, 'DELETE')
+        this.favourites = this.favourites.filter((fav) => fav.id !== recipeId)
+      } catch (error) {
+        console.error('Error removing from favourites:', error)
+        alert('Error removing recipe from favourites')
+      }
     }
   },
   created() {
@@ -414,7 +443,6 @@ export default {
 }
 
 input[type='text'] {
-  flex: 1;
   min-width: 250px;
 }
 
@@ -435,6 +463,16 @@ h1 {
   color: #666;
 }
 
+.error-message {
+  text-align: center;
+  padding: 20px;
+  color: #dc3545;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  border-radius: 4px;
+  margin: 20px 0;
+}
+
 .filters {
   margin-bottom: 20px;
   display: flex;
@@ -444,7 +482,6 @@ h1 {
 }
 
 .search-bar {
-  flex: 1;
   width: 100% !important
 }
 
@@ -464,7 +501,7 @@ h1 {
 
   .search-bar {
     width: 100%;
-    order: -1; /* Makes search bar appear first */
+    order: -1;
   }
 
   .filter-options,
@@ -487,7 +524,7 @@ h1 {
     width: 100%;
     box-sizing: border-box;
     padding: 10px;
-    font-size: 16px; /* Better for mobile tap targets */
+    font-size: 16px;
   }
 
   .sort-label {
@@ -499,7 +536,6 @@ h1 {
     font-size: 16px;
   }
 
-  /* Ensure proper spacing between radio options */
   .radio-group {
     gap: 12px;
   }
@@ -552,13 +588,8 @@ h1 {
   gap: 5px;
 }
 
-/* .recipes-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 20px;
-} */
-
 .recipe-card {
+  margin: 10px;
   position: relative;
   border: 1px solid #ddd;
   border-radius: 8px;
@@ -601,6 +632,7 @@ h1 {
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 1000;
 }
 
 .modal-content {
