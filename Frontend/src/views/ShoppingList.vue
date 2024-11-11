@@ -2,8 +2,8 @@
   <div class="page-display">
     <h1>🛒 Shopping List</h1>
     <div class="main-card main-card-items row">
-      <input class="col" type="text" v-model="newItem" placeholder="Add new item" id="item" />
-      <input class="col" type="text" v-model="quantity" placeholder="Quantity" id="quantity"/>
+      <input class="col" style="min-width:200px" type="text" v-model="newItem" placeholder="Add new item" id="item" />
+      <input class="col" style="min-width:200px" type="text" v-model="quantity" placeholder="Quantity" id="quantity"/>
       <button class="col" @click="addItem">Add</button>
     </div>
     <ul v-if="items.length">

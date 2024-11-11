@@ -15,7 +15,7 @@
       <!-- Redemption options -->
       <h4>Available Redemption Options:</h4>
       <ul>
-        <li v-for="option in redemptionOptions" :key="option.id">
+        <li style="width:90%; margin:20px auto" v-for="option in redemptionOptions" :key="option.id">
           {{ option.description }} - {{ option.pointsRequired }} Points
           <button @click="redeemPoints(option)">Redeem</button>
         </li>
