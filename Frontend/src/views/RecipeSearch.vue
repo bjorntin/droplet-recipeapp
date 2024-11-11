@@ -3,8 +3,8 @@
     <h1>🍲 Recipe Search</h1>
 
     <div class="main-card">
-      <div class="main-card-items">
-        <input
+      <div class="main-card-items row">
+        <input style="min-width:100px" class="col"
           type="text"
           v-model="searchQuery"
           placeholder="Enter ingredients or recipe name"
@@ -16,11 +16,11 @@
             Apply My Dietary Restrictions
           </label>
         </div> -->
-        <label class="filter-checkbox">
+        <label class="col filter-checkbox">
           <div class="inline"><input type="checkbox" v-model="applyHealthFilters" />
           Apply My Dietary Restrictions</div>
         </label>
-        <button @click="searchRecipes" :disabled="isLoading">
+        <button class="col-12 col-md-4" @click="searchRecipes" :disabled="isLoading">
           {{ isLoading ? 'Searching...' : 'Search' }}
         </button>
       </div>
