@@ -57,6 +57,9 @@ cd /root
 rm -rf droplet-recipeapp
 git clone https://github.com/bjorntin/droplet-recipeapp.git
 
-
+git pull origin main 
+cd Frontend
+npm install
+npm run build
 pm2 serve dist 5173 --name "recipe-frontend" --spa
 pm2 start app.js --name "recipe-backend"
